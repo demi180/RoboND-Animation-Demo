@@ -8,10 +8,16 @@ public class RotationDemoUI : MonoBehaviour
 	public ArmRotationDemo arm;
 	public Dropdown spaceDropdown;
 	public UIRotationList rotations;
+	public OrbitCam cam;
+
+	public Slider xSlider;
+	public Slider ySlider;
+	public Slider zSlider;
 
 	void Awake ()
 	{
 		SetRotationSpace ( spaceDropdown.value );
+		ResetArm ();
 	}
 
 	public void PlaySequence ()
@@ -32,11 +38,30 @@ public class RotationDemoUI : MonoBehaviour
 
 	public void ResetArm ()
 	{
+		xSlider.value = 0.5f;
+		ySlider.value = 0.5f;
+		zSlider.value = 0.5f;
+		arm.ResetPivot ();
 		arm.ResetArm ();
 	}
 
 	public void SetRotationSpace (int space)
 	{
 		arm.SetRotationSpace ( space == 0 ? Space.World : Space.Self );
+	}
+
+	public void PivotPositionX (float value)
+	{
+		arm.SetPivotX ( value );
+	}
+
+	public void PivotPositionZ (float value)
+	{
+		arm.SetPivotZ ( value );
+	}
+
+	public void PivotPositionY (float value)
+	{
+		arm.SetPivotY ( value );
 	}
 }

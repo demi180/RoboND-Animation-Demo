@@ -14,6 +14,10 @@ public class OrbitCam : MonoBehaviour
 	Vector3 baseInitialPosition;
 	Vector3 camInitialPosition;
 
+	bool mouseIsNearSliders;
+	bool leftMouseDown;
+	bool rightMouseDown;
+
 	void Awake ()
 	{
 		baseInitialPosition = camBase.position;
@@ -24,17 +28,38 @@ public class OrbitCam : MonoBehaviour
 	void LateUpdate ()
 	{
 		Vector2 mouse = new Vector2 ( Input.GetAxis ( "Mouse X" ), Input.GetAxis ( "Mouse Y" ) );
+		Vector2 mousePos = Input.mousePosition;
+		// check if the mouse is in the top right corner near the sliders
+		mouseIsNearSliders = mousePos.x > Screen.width - 300 * ( 1f * Screen.width / 1920 );
+		mouseIsNearSliders &= mousePos.y > Screen.height - 250 * ( 1f * Screen.height / 1080 );
 
-		if ( Input.GetMouseButton ( 0 ) )
+		// update left mouse down status. disallow down if we're near the sliders
+		if ( Input.GetMouseButtonDown ( 0 ) && !mouseIsNearSliders )
+		{
+			leftMouseDown = true;
+		}
+		if ( Input.GetMouseButtonUp ( 0 ) )
+			leftMouseDown = false;
+
+		// update right mouse down status. disallow down if we're near the sliders
+		if ( Input.GetMouseButtonDown ( 1 ) && !mouseIsNearSliders )
+		{
+			rightMouseDown = true;
+		}
+		if ( Input.GetMouseButtonUp ( 1 ) )
+			rightMouseDown = false;
+
+		// if the mouse is down, rotate the camera
+		if ( leftMouseDown )
 		{
 			camBase.Rotate ( Vector3.up * mouse.x * rotationSpeed * Time.deltaTime, Space.World );
 			camBase.Rotate ( Vector3.right * -mouse.y * rotationSpeed * Time.deltaTime, Space.Self );
 
 		}
-		if ( Input.GetMouseButton ( 1 ) )
+		// if right mouse is down, move the camera
+		if ( rightMouseDown )
 		{
 			Vector3 forward = Vector3.ProjectOnPlane ( camBase.forward, Vector3.up ).normalized * -mouse.y;
-//			Vector3 right = Vector3.zero;
 			Vector3 right = camBase.right * -mouse.x;
 			camBase.Translate ( ( forward + right ) * moveSpeed * Time.deltaTime, Space.World );
 		}

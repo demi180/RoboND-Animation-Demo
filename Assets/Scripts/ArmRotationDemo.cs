@@ -12,7 +12,9 @@ public class ArmRotationDemo : MonoBehaviour
 	public float guiOffset;
 	public string refFrame;
 	public Vector3 axisPosition;
+	public SphereCollider pivotSphere;
 
+	Transform sphereTransform;
 	Camera cam;
 	Quaternion startRotation;
 	Vector3 xPos;
@@ -25,6 +27,11 @@ public class ArmRotationDemo : MonoBehaviour
 
 	bool isPlayingSequence;
 	bool visible;
+
+	void OnEnable ()
+	{
+		sphereTransform = pivotSphere.transform;
+	}
 
 	void Awake ()
 	{
@@ -115,6 +122,39 @@ public class ArmRotationDemo : MonoBehaviour
 		Debug.Log ( "Finished sequence" );
 	}
 
+	public void SetPivotX (float value)
+	{
+		float radius = sphereTransform.localScale.x;
+		Vector3 pos = pivotPoint.position;
+		pos.x = sphereTransform.position.x + radius * ( value - 0.5f );
+		pivotPoint.position = pos;
+		axesObject.position = pivotPoint.position;
+	}
+
+	public void SetPivotZ (float value)
+	{
+		float radius = sphereTransform.localScale.y;
+		Vector3 pos = pivotPoint.position;
+		pos.y = sphereTransform.position.y + radius * ( value - 0.5f );
+		pivotPoint.position = pos;
+		axesObject.position = pivotPoint.position;
+	}
+
+	public void SetPivotY (float value)
+	{
+		float radius = sphereTransform.localScale.z;
+		Vector3 pos = pivotPoint.position;
+		pos.z = sphereTransform.position.z + radius * ( value - 0.5f );
+		pivotPoint.position = pos;
+		axesObject.position = pivotPoint.position;
+	}
+
+	public void ResetPivot ()
+	{
+		pivotPoint.position = sphereTransform.position;
+		axesObject.position = pivotPoint.position;
+	}
+
 	void OnGUI ()
 	{
 		if ( !visible )
@@ -130,17 +170,23 @@ public class ArmRotationDemo : MonoBehaviour
 		screenPos.y = Screen.height - screenPos.y - 10;
 		Vector2 size = new Vector2 ( 25, 25 );
 
+		GUI.color = Color.black;
+		GUI.Label ( new Rect ( screenPos - size + Vector2.one, size * 2 ), "X" );
 		GUI.color = Color.red;
-		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "x" );
+		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "X" );
 
-		GUI.color = Color.green;
 		screenPos = cam.WorldToScreenPoint ( tips[1].position );
 		screenPos.y = Screen.height - screenPos.y - 10;
-		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "y" );
+		GUI.color = Color.black;
+		GUI.Label ( new Rect ( screenPos - size + Vector2.one, size * 2 ), "Y" );
+		GUI.color = Color.green;
+		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "Y" );
 
-		GUI.color = Color.blue;
 		screenPos = cam.WorldToScreenPoint ( tips[2].position );
 		screenPos.y = Screen.height - screenPos.y - 10;
-		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "z" );
+		GUI.color = Color.black;
+		GUI.Label ( new Rect ( screenPos - size + Vector2.one, size * 2 ), "Z" );
+		GUI.color = Color.blue;
+		GUI.Label ( new Rect ( screenPos - size, size * 2 ), "Z" );
 	}
 }
