@@ -2,32 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Rotation
-{
-	public enum RotationAxis { X, Y, Z }
-	public RotationAxis axis;
-	[Range (0, 360)]
-	public float degrees;
-	public float rotationTime = 3;
-	public float pauseBefore;
-	public float pauseAfter;
-	public string infoBefore;
-	public string infoDuring;
-	public string infoAfter;
-}
-
 public class ArmRotationDemo : MonoBehaviour
 {
 	public Transform targetJoint;
 	public Transform axesObject;
 	public Transform[] tips;
+	public Transform pivotPoint;
 	public Space rotationSpace;
 	public float guiOffset;
 	public string refFrame;
 	public Vector3 axisPosition;
-
-	public List<Rotation> rotations = new List<Rotation> ();
 
 	Camera cam;
 	Quaternion startRotation;
@@ -104,15 +88,22 @@ public class ArmRotationDemo : MonoBehaviour
 			end = start + length;
 			angle = angles [ i ];
 			axis = axes [ i ];
-			if ( rotationSpace == Space.Self )
-				axis = targetJoint.InverseTransformDirection ( axis );
+			if ( rotationSpace == Space.Self && pivotPoint != null )
+				axis = targetJoint.TransformDirection ( axis );
+//			if ( rotationSpace == Space.Self && pivotPoint == null )
+//				axis = targetJoint.InverseTransformDirection ( axis );
 			frameAngle = axis * angle / length;
 
 			Debug.Log ( "starting rotation at " + start + " until " + end + " of " + angle + " degrees about " + axis );
 
 			while ( Time.time < end )
 			{
-				targetJoint.Rotate ( frameAngle * Time.deltaTime, rotationSpace );
+				if ( pivotPoint != null )
+				{
+					Vector3 point = pivotPoint.position;
+					targetJoint.RotateAround ( point, axis, angle / length * Time.deltaTime );
+				} else
+					targetJoint.Rotate ( frameAngle * Time.deltaTime, rotationSpace );
 				yield return null;
 			}
 
@@ -133,7 +124,7 @@ public class ArmRotationDemo : MonoBehaviour
 		int fontSize = label.fontSize;
 		FontStyle fontStyle = label.fontStyle;
 
-		label.fontSize = (int) ( 36f * Screen.height / 1080 );
+		label.fontSize = (int) ( 42f * Screen.height / 1080 );
 		label.fontStyle = FontStyle.Bold;
 		Vector2 screenPos = cam.WorldToScreenPoint ( tips[0].position );
 		screenPos.y = Screen.height - screenPos.y - 10;
