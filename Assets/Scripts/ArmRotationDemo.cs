@@ -17,6 +17,7 @@ public class ArmRotationDemo : MonoBehaviour
 	Transform sphereTransform;
 	Camera cam;
 	Quaternion startRotation;
+	Vector3 startPosition;
 	Vector3 xPos;
 	Vector3 yPos;
 	Vector3 zPos;
@@ -36,6 +37,7 @@ public class ArmRotationDemo : MonoBehaviour
 	void Awake ()
 	{
 //		StartCoroutine ( DoAnimation () );
+		startPosition = targetJoint.position;
 		startRotation = targetJoint.rotation;
 		cam = Camera.main;
 	}
@@ -67,6 +69,7 @@ public class ArmRotationDemo : MonoBehaviour
 	public void ResetArm ()
 	{
 		StopAllCoroutines ();
+		targetJoint.position = startPosition;
 		targetJoint.rotation = startRotation;
 		isPlayingSequence = false;
 	}
@@ -108,9 +111,9 @@ public class ArmRotationDemo : MonoBehaviour
 				if ( pivotPoint != null )
 				{
 					Vector3 point = pivotPoint.position;
-					targetJoint.RotateAround ( point, axis, angle / length * Time.deltaTime );
+					targetJoint.RotateAround ( point, axis, -angle / length * Time.deltaTime );
 				} else
-					targetJoint.Rotate ( frameAngle * Time.deltaTime, rotationSpace );
+					targetJoint.Rotate ( -frameAngle * Time.deltaTime, rotationSpace );
 				yield return null;
 			}
 

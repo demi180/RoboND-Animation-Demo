@@ -19,13 +19,6 @@
 			
 			#include "UnityCG.cginc"
 
-			struct appdata
-			{
-			};
-
-			struct v2f
-			{
-			};
 
 			float4 vert (float4 vertex : POSITION) : SV_POSITION
             {
