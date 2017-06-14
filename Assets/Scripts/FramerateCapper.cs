@@ -15,7 +15,7 @@ public class FramerateCapper : MonoBehaviour
 			if ( QualitySettings.vSyncCount == 2 )
 				Application.targetFrameRate = 30;
 			else
-				Application.targetFrameRate = 0;
+				Application.targetFrameRate = 60;
 		}
 	}
 }
